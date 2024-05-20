@@ -29,7 +29,7 @@ import { ConfigModule } from '@nestjs/config';
       tracesSampleRate: 1.0,
       debug: true,
     }),
-    UsersModule,
+    UsersModule, 
   ],
   controllers: [AppController, UsersController],
   providers: [AppService, UsersService],
