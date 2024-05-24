@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  HttpStatus 
 } from '@nestjs/common';
 import { User } from './user.model';
 import { ApiTags, ApiParam } from '@nestjs/swagger';
@@ -16,7 +17,7 @@ import { ApiTags, ApiParam } from '@nestjs/swagger';
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @Get()
+  @Get("/getAll")
   findAll(): Promise<User[]> {
     return this.userService.findAll();
   }

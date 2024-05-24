@@ -9,6 +9,8 @@ import { User } from './users/user.model';
 import { SentryModule } from './sentry/sentry.module';
 import * as Sentry from '@sentry/node';
 import { ConfigModule } from '@nestjs/config';
+import { VoiceController } from './voice/voice.controller';
+import { VoiceService } from './voice/voice.service';
 
 @Module({
   imports: [
@@ -31,8 +33,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     UsersModule, 
   ],
-  controllers: [AppController, UsersController],
-  providers: [AppService, UsersService],
+  controllers: [AppController, UsersController, VoiceController],
+  providers: [AppService, UsersService, VoiceService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {
