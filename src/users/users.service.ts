@@ -7,7 +7,6 @@ export class UsersService {
   constructor(@InjectModel(User) private userModel: typeof User) {}
 
  async findAll(): Promise<User[]> {
-  console.log("cái dmdm");
   
     // Trả về dữ liệu giả lập
     return [
