@@ -11,6 +11,7 @@ import * as Sentry from '@sentry/node';
 import { ConfigModule } from '@nestjs/config';
 import { VoiceController } from './voice/voice.controller';
 import { VoiceService } from './voice/voice.service';
+import { AuthModule } from './auth/auth.module'; // Import AuthModule
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { VoiceService } from './voice/voice.service';
       tracesSampleRate: 1.0,
       debug: true,
     }),
-    UsersModule, 
+    UsersModule,
+    AuthModule, // Thêm dòng này để import AuthModule
   ],
   controllers: [AppController, UsersController, VoiceController],
   providers: [AppService, UsersService, VoiceService],

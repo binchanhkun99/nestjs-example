@@ -21,6 +21,7 @@ export class UsersService {
       {
         id: 2,
         name: 'Jane Smith',
+        
         email: 'jane.smith@example.com',
         password: 'password456',
         createdAt: new Date(),
@@ -30,17 +31,19 @@ export class UsersService {
   }
 
 
-  async findOne(id: string): Promise<User> {
+async findOne(username: string): Promise<User | null> {
+  return this.userModel.findOne({ where: { username } });
+}
+  
+  async findOneEmail(email: string): Promise<User> {
     return this.userModel.findOne({
       where: {
-        id,
+        email,
       },
     });
   }
-
-  async create(userData: any): Promise<User> {
-    const user = await this.userModel.create(userData);
-    return user;
+  async create(userDto: Partial<User>): Promise<User> {
+    return this.userModel.create(userDto);
   }
 
   async update(id: string, userData: any): Promise<User> {
