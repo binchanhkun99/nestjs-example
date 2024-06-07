@@ -1,14 +1,18 @@
 import { Controller, Post, Body, HttpStatus, HttpException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../users/user.model';
+import { ApiTags, ApiParam } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @ApiParam({ name: 'username'})
   async login(@Body() body) {
     const { username, password } = body;
+    console.log("process.env.UD___________>", process.env.DB_PASSWORD)
     const validationResult = await this.authService.validate(username, password);
 
     if (!validationResult.success) {
@@ -16,6 +20,7 @@ export class AuthController {
         status: HttpStatus.UNAUTHORIZED,
         error: validationResult.message,
       }, HttpStatus.UNAUTHORIZED);
+
     }
 
     const tokenResult = await this.authService.login(validationResult.user);
@@ -30,7 +35,6 @@ export class AuthController {
   @Post('register')
   async register(@Body() body: Partial<User>) {
 
-    console.log("Vào đây không z")
     const result = await this.authService.register(body);
 
     if (!result.success) {

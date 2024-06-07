@@ -12,6 +12,10 @@ import { ConfigModule } from '@nestjs/config';
 import { VoiceController } from './voice/voice.controller';
 import { VoiceService } from './voice/voice.service';
 import { AuthModule } from './auth/auth.module'; // Import AuthModule
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { LoggerMiddleware } from './middleware/logger.middleware';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -19,9 +23,9 @@ import { AuthModule } from './auth/auth.module'; // Import AuthModule
       dialect: 'mysql',
       host: 'localhost',
       port: 3306,
-      username: 'root',
-      password: 'Hoangnam147*',
-      database: 'nestjs',
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       models: [User],
       autoLoadModels: true,
       synchronize: true,
@@ -33,7 +37,8 @@ import { AuthModule } from './auth/auth.module'; // Import AuthModule
       debug: true,
     }),
     UsersModule,
-    AuthModule, // Thêm dòng này để import AuthModule
+    AuthModule,
+    PostsModule, 
   ],
   controllers: [AppController, UsersController, VoiceController],
   providers: [AppService, UsersService, VoiceService],
@@ -41,7 +46,7 @@ import { AuthModule } from './auth/auth.module'; // Import AuthModule
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {
     consumer
-      .apply(Sentry.Handlers.requestHandler())
+      .apply(Sentry.Handlers.requestHandler(), LoggerMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

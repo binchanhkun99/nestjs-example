@@ -36,15 +36,22 @@ export class AuthService {
     if (userExists) {
       return { success: false, message: 'Username đã tồn tại' };
     }
+  
     // Hash mật khẩu trước khi lưu vào cơ sở dữ liệu
     const hashedPassword = await bcrypt.hash(userDto.password, 10);
     userDto.password = hashedPassword;
+  
     const user = await this.userService.create(userDto);
     const payload = { username: user.username, sub: user.id };
+  
+    // Lấy dữ liệu thực sự của người dùng và loại bỏ mật khẩu
+    const userObject = user.get({ plain: true });
+    delete userObject.password;
+  
     return {
       success: true,
-      user: user.toJSON(),
+      user: userObject,
       access_token: this.jwtService.sign(payload),
     };
-  }
-}
+  } 
+}  

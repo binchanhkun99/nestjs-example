@@ -1,6 +1,6 @@
-import { Column, Table, Model, PrimaryKey, AutoIncrement } from 'sequelize-typescript';
+import { Column, Table, Model, PrimaryKey, AutoIncrement, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-
+import { Post } from '../posts/posts.model';
 @Table
 export class User extends Model {
   @PrimaryKey
@@ -24,4 +24,7 @@ export class User extends Model {
   @Column
   @ApiProperty()
   password: string;
+
+  @HasMany(() => Post) // Định nghĩa mối quan hệ HasMany với Post
+  posts: Post[];
 }
