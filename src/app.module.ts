@@ -6,14 +6,15 @@ import { UsersController } from './users/users.controller';
 import { UsersService } from './users/users.service';
 import { UsersModule } from './users/users.module';
 import { User } from './users/user.model';
+import { Post } from './posts/posts.model'; // Import Post model
+import { Comment } from './posts/comment.model'; // Import Comment model
+import { Reaction } from './posts/reaction.model'; // Import Reaction model
 import { SentryModule } from './sentry/sentry.module';
 import * as Sentry from '@sentry/node';
 import { ConfigModule } from '@nestjs/config';
 import { VoiceController } from './voice/voice.controller';
 import { VoiceService } from './voice/voice.service';
-import { AuthModule } from './auth/auth.module'; // Import AuthModule
-import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { PostsModule } from './posts/posts.module';
 
@@ -26,7 +27,7 @@ import { PostsModule } from './posts/posts.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      models: [User],
+      models: [User, Post, Comment, Reaction], // Register models
       autoLoadModels: true,
       synchronize: true,
     }),
@@ -38,7 +39,7 @@ import { PostsModule } from './posts/posts.module';
     }),
     UsersModule,
     AuthModule,
-    PostsModule, 
+    PostsModule,
   ],
   controllers: [AppController, UsersController, VoiceController],
   providers: [AppService, UsersService, VoiceService],

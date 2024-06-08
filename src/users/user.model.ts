@@ -25,6 +25,6 @@ export class User extends Model {
   @ApiProperty()
   password: string;
 
-  @HasMany(() => Post) // Định nghĩa mối quan hệ HasMany với Post
+  @HasMany(() => Post) 
   posts: Post[];
 }
