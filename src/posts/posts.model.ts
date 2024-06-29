@@ -26,6 +26,12 @@ export class Post extends Model {
   content: string;
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  imagePath: string; // Thêm cột imagePath để lưu trữ đường dẫn đến hình ảnh
+
+  @Column({
     type: DataType.ENUM,
     values: ['draft', 'published', 'archived', 'editing', 'delete'],
     defaultValue: 'draft',

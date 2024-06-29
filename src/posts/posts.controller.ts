@@ -1,10 +1,13 @@
-// src/posts/posts.controller.ts
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { PostsService } from './posts.service';
 import { Post as PostEntity } from './posts.model';
 import { AuthGuard } from '@nestjs/passport';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { filterXSS } from 'xss';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('posts')
 export class PostsController {
@@ -12,10 +15,29 @@ export class PostsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post('create')
-  async createPost(@Body() createPostDto: CreatePostDto, @Request() req): Promise<PostEntity> {
-    const userId = req.user.userId; // Lấy userId từ token
-    return this.postsService.createPost(createPostDto.title, createPostDto.content, userId);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads', // Đường dẫn lưu trữ tệp tải lên
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async createPost(
+    @Body() createPostDto: CreatePostDto,
+    @Request() req,
+    @UploadedFile() file?: Express.Multer.File, // Thêm dấu "?" ở đây
+  ): Promise<PostEntity> {
+    const userId = req.user.userId;
+    const sanitizedContent = filterXSS(createPostDto.content);
+    const imagePath = file ? file.path : null;
+    
+    return this.postsService.createPost(createPostDto.title, sanitizedContent, userId, imagePath);
   }
+  
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
@@ -35,7 +57,8 @@ export class PostsController {
     @Param('id') id: number,
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<void> {
-    await this.postsService.updatePost(id, updatePostDto.title, updatePostDto.content, updatePostDto.status);
+    const sanitizedContent = filterXSS(updatePostDto.content);
+    await this.postsService.updatePost(id, updatePostDto.title, sanitizedContent, updatePostDto.status);
   }
 
   @UseGuards(AuthGuard('jwt'))
